@@ -69,6 +69,33 @@ docs/
   PROBLEM_STATEMENT.md
 ```
 
+## Results on the held-out period
+
+18,223 transactions the model never saw during training, 429 of them fraudulent.
+
+| Strategy | Precision | Recall | False-positive rate | Net (simulated) |
+|---|---|---|---|---|
+| Rules only | 1.000 | 0.079 | 0.0000 | INR 115,153 |
+| Model only, same decline budget | 0.985 | 0.741 | 0.0003 | INR 3,644,976 |
+| **Hybrid: rules + model + agent** | **0.989** | **0.823** | **0.0002** | **INR 3,730,918** |
+
+Against the success criteria in the problem statement:
+
+- **Detection.** +74 points of recall over rules alone, at a lower false-positive rate. The
+  target was +15.
+- **Cost control.** 1.4% of traffic reaches the agent, against a 10% ceiling. Cost per 1,000
+  transactions is computed from recorded token usage, not estimated.
+- **Latency.** The authorization path (features, rules, model) runs at 13.1 ms p95 against a
+  50 ms target. The agent path is asynchronous and never blocks an authorization.
+- **Explainability.** Every escalated case carries a verdict, a confidence, and evidence
+  entries naming the tool that produced each fact.
+- **Merchant linkage.** The bust-out merchants are the clearest case: their individual
+  payments look ordinary, and the merchant risk trajectory is what exposes them.
+- **Feedback.** Analyst overrides and arriving chargebacks are stored as outcomes and drive
+  rule precision statistics and retraining.
+
+Full report, including the band sweep: `data/evaluation.md`.
+
 ## Running it
 
 ```bash
@@ -78,7 +105,24 @@ python -m arm.simulator.generator   # generate the dataset
 python -m arm.scoring.train         # train and calibrate the model
 python -m arm.backfill              # score everything, roll up merchants, run agent cases
 python -m eval.harness              # write the evaluation report
+python -m pytest                    # 13 tests, no network required
 ```
+
+Then the dashboard, in two terminals:
+
+```bash
+cd backend && python -m uvicorn arm.api.main:app --port 8000
+```
+
+```bash
+cd frontend && npm install && npm run dev
+```
+
+The console opens at `http://localhost:5173`. Five screens: **Live** (the score spine, where
+every payment docks at its own score and the shaded middle is the band that reaches the
+agent), **Cases** (the queue, and the evidence behind each verdict), **Merchants** (portfolio
+risk and underwriting memos), **Rules** (hit counts and measured precision per rule, so dead
+rules are visible), and **Evidence** (the evaluation report).
 
 Everything above runs offline. The agent falls back to a deterministic heuristic reviewer
 when no API key is configured, so the demo and the tests never require a network call.
