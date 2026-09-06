@@ -35,7 +35,7 @@ transaction
 [3] fraud model           gradient boosting + isotonic calibration -> probability
     |
     v
-[4] band router           < 0.30 approve | 0.30-0.85 review | >= 0.85 decline
+[4] band router           < 0.15 approve | 0.15-0.80 review | >= 0.80 decline
     |                                        |
     |                                        v
     |                            [5] analyst agent (async)
