@@ -1,0 +1,95 @@
+# Deterministic rules layer.
+#
+# action: block        -> decline immediately, no model, no agent
+#         score_boost  -> add `boost` to the model score before banding
+#         flag         -> record the hit as evidence, change nothing
+#
+# Conditions are evaluated against a flat context: every feature from the
+# feature engine plus the raw transaction fields (amount, method, ip_country,
+# bin_country, merchant_category, merchant_frozen, merchant_txn_limit).
+rules:
+  - id: R001
+    description: Frozen merchant cannot accept payments
+    when: "merchant_frozen == 1"
+    action: block
+    owner: risk-ops
+
+  - id: R002
+    description: Transaction exceeds the merchant's per-transaction limit
+    when: "amount > merchant_txn_limit"
+    action: block
+    owner: risk-ops
+
+  - id: R003
+    description: Card-testing burst - rapid low-value attempts from one device
+    when: "device_txn_1m >= 6 and amount < 100"
+    action: block
+    owner: fraud-eng
+
+  - id: R004
+    description: Device shared across many distinct cards within a day
+    when: "device_distinct_cards_24h >= 8"
+    action: block
+    owner: fraud-eng
+
+  - id: R005
+    description: Offshore IP on a domestic card
+    when: "geo_bin_ip_mismatch == 1 and geo_ip_offshore == 1"
+    action: score_boost
+    boost: 0.25
+    owner: fraud-eng
+
+  - id: R006
+    description: Ticket far above the customer's own baseline
+    when: "amount_over_customer_typical >= 5 and customer_age_days > 30"
+    action: score_boost
+    boost: 0.15
+    owner: fraud-eng
+
+  - id: R007
+    description: New device in a city the customer has never transacted from
+    when: "device_is_new == 1 and customer_is_new_city == 1"
+    action: score_boost
+    boost: 0.20
+    owner: fraud-eng
+
+  - id: R008
+    description: Many distinct customers behind one device in a day
+    when: "device_distinct_customers_24h >= 5"
+    action: score_boost
+    boost: 0.20
+    owner: fraud-eng
+
+  - id: R009
+    description: Subnet fan-out - one subnet serving many customers
+    when: "subnet_distinct_customers_24h >= 8"
+    action: score_boost
+    boost: 0.15
+    owner: fraud-eng
+
+  - id: R010
+    description: Merchant daily volume far above its own recent baseline
+    when: "merchant_volume_ratio_7d >= 3 and merchant_age_days < 180"
+    action: score_boost
+    boost: 0.10
+    owner: underwriting
+
+  - id: R011
+    description: High-value payment on a young high-risk merchant
+    when: "merchant_is_high_risk_category == 1 and merchant_age_days < 90 and amount > 10000"
+    action: score_boost
+    boost: 0.12
+    owner: underwriting
+
+  - id: R012
+    description: Night-hours activity on an elevated-risk merchant
+    when: "is_night == 1 and merchant_is_high_risk_category == 1"
+    action: flag
+    owner: fraud-eng
+
+  - id: R013
+    description: Card used across many merchants within a day
+    when: "card_distinct_merchants_24h >= 6"
+    action: score_boost
+    boost: 0.18
+    owner: fraud-eng

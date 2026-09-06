@@ -1,0 +1,150 @@
+{
+  "holdout_transactions": 18463,
+  "holdout_fraud": 678,
+  "current_band": [
+    0.3,
+    0.85
+  ],
+  "strategies": [
+    {
+      "strategy": "rules only",
+      "declined": 96,
+      "reviewed": 0,
+      "review_rate": 0.0,
+      "precision": 1.0,
+      "recall": 0.1416,
+      "false_positive_rate": 0.0,
+      "fraud_value_stopped_inr": 64811.57,
+      "fraud_value_missed_inr": 4425710.01,
+      "net_inr": 208811.57,
+      "notes": "Deterministic layer alone, no model, no agent."
+    },
+    {
+      "strategy": "model only",
+      "declined": 497,
+      "reviewed": 0,
+      "review_rate": 0.0,
+      "precision": 0.9638,
+      "recall": 0.7065,
+      "false_positive_rate": 0.00101,
+      "fraud_value_stopped_inr": 3948669.37,
+      "fraud_value_missed_inr": 541852.21,
+      "net_inr": 4662790.73,
+      "notes": "Same decline budget as the hybrid, ranked by model score."
+    },
+    {
+      "strategy": "hybrid (rules + model + agent)",
+      "declined": 497,
+      "reviewed": 129,
+      "review_rate": 0.007,
+      "precision": 0.9963,
+      "recall": 0.8024,
+      "false_positive_rate": 0.00011,
+      "fraud_value_stopped_inr": 3739881.46,
+      "fraud_value_missed_inr": 750640.12,
+      "net_inr": 4555400.18,
+      "notes": "Agent contribution counted at its measured catch rate."
+    }
+  ],
+  "agent": {
+    "cases": 300,
+    "catch_rate": 0.4903,
+    "precision": 0.886,
+    "escalation_rate": 0.1667,
+    "cost_per_case_usd": 0.0
+  },
+  "latency": {
+    "samples": 800,
+    "p50_ms": 6.166,
+    "p95_ms": 9.889,
+    "p99_ms": 11.441,
+    "max_ms": 21.868,
+    "mean_ms": 6.745
+  },
+  "band_sweep": [
+    {
+      "band": [
+        0.5,
+        0.9
+      ],
+      "review_rate": 0.0038,
+      "recall": 0.7655,
+      "precision": 0.9962,
+      "false_positive_rate": 0.00011,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4317178.76
+    },
+    {
+      "band": [
+        0.4,
+        0.9
+      ],
+      "review_rate": 0.005,
+      "recall": 0.7758,
+      "precision": 0.9962,
+      "false_positive_rate": 0.00011,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4386006.26
+    },
+    {
+      "band": [
+        0.3,
+        0.85
+      ],
+      "review_rate": 0.007,
+      "recall": 0.8024,
+      "precision": 0.9963,
+      "false_positive_rate": 0.00011,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4555400.18
+    },
+    {
+      "band": [
+        0.2,
+        0.85
+      ],
+      "review_rate": 0.0099,
+      "recall": 0.8201,
+      "precision": 0.9964,
+      "false_positive_rate": 0.00011,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4644910.12
+    },
+    {
+      "band": [
+        0.15,
+        0.8
+      ],
+      "review_rate": 0.0165,
+      "recall": 0.8348,
+      "precision": 0.9965,
+      "false_positive_rate": 0.00011,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4730481.19
+    },
+    {
+      "band": [
+        0.1,
+        0.75
+      ],
+      "review_rate": 0.0183,
+      "recall": 0.8422,
+      "precision": 0.9965,
+      "false_positive_rate": 0.00011,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4765895.86
+    },
+    {
+      "band": [
+        0.05,
+        0.7
+      ],
+      "review_rate": 0.021,
+      "recall": 0.8525,
+      "precision": 0.9948,
+      "false_positive_rate": 0.00017,
+      "llm_cost_per_1k_txn_usd": 0.0,
+      "net_inr": 4811546.8
+    }
+  ]
+}

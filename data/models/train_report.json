@@ -1,0 +1,10 @@
+{
+  "n_train": 43078,
+  "n_test": 18463,
+  "fraud_rate_train": 0.02542,
+  "fraud_rate_test": 0.03672,
+  "roc_auc": 0.9918,
+  "average_precision": 0.9559,
+  "split_at": 43078,
+  "n_features": 36
+}

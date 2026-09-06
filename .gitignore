@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+data/*.db
+data/models/*.joblib
+node_modules/
+frontend/dist/
+.venv/
+data/features.npz
+data/*.npz
