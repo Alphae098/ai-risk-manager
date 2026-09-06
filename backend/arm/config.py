@@ -28,8 +28,8 @@ class BandConfig:
     uncertain band that the analyst agent investigates asynchronously.
     """
 
-    approve_below: float = 0.30
-    decline_at: float = 0.85
+    approve_below: float = 0.15
+    decline_at: float = 0.80
 
     def band_of(self, score: float) -> str:
         if score < self.approve_below:
@@ -62,8 +62,8 @@ PRICE_PER_1M_INPUT_USD = float(os.getenv("ARM_PRICE_IN", "3.0"))
 PRICE_PER_1M_OUTPUT_USD = float(os.getenv("ARM_PRICE_OUT", "15.0"))
 
 BANDS = BandConfig(
-    approve_below=float(os.getenv("ARM_BAND_LOW", "0.30")),
-    decline_at=float(os.getenv("ARM_BAND_HIGH", "0.85")),
+    approve_below=float(os.getenv("ARM_BAND_LOW", "0.15")),
+    decline_at=float(os.getenv("ARM_BAND_HIGH", "0.80")),
 )
 LLM = LLMConfig()
 

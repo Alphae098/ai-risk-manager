@@ -91,6 +91,15 @@ def compute_snapshot(conn: sqlite3.Connection, merchant_id: str,
         + 0.10 * (1.0 if age_days < 90 else 0.0)
     ))
 
+    # The composite weights several leading indicators, which means a merchant
+    # can sit mid-scale while its chargeback ratio is already multiples of the
+    # threshold that triggers network penalties. Past that point the ratio is
+    # not one signal among several - it is the finding - so it sets a floor.
+    if cb_ratio >= 2 * CB_MONITORING_THRESHOLD:
+        risk_score = max(risk_score, 0.85)
+    elif cb_ratio >= CB_MONITORING_THRESHOLD:
+        risk_score = max(risk_score, 0.65)
+
     reserve = _recommend_reserve(risk_score, cb_ratio)
     limit = _recommend_limit(merchant["txn_limit"], risk_score, current)
     memo = write_memo(merchant, risk_score, cb_ratio, volume_delta, fraud_rate,

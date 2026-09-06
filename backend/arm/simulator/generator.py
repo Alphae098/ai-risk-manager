@@ -43,7 +43,7 @@ class SimConfig:
     n_merchants: int = 120
     n_customers: int = 4000
     txns_per_day: int = 900
-    fraud_rate: float = 0.018          # share of transactions that are fraudulent
+    fraud_rate: float = 0.005          # share of transactions that are fraudulent
     seed: int = 7
     start: datetime = datetime(2026, 5, 1)
 
@@ -265,7 +265,7 @@ class Simulator:
                     kind, arrived = "clean", ts + timedelta(days=45)
             else:
                 # A thin band of genuine disputes on legitimate payments.
-                if self.rng.random() < 0.0012:
+                if self.rng.random() < 0.0004:
                     kind, arrived = "chargeback", ts + timedelta(days=self.rng.randint(10, 45))
                 else:
                     kind, arrived = "clean", ts + timedelta(days=45)
